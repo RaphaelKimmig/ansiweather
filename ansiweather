@@ -34,6 +34,10 @@ function get_config {
 	fi
 }
 
+function json {
+    python -c "import sys,json;data=json.load(sys.stdin); print($1)"
+}
+
 # Location : example "Moscow,RU"
 location=$(get_config "location" || echo "Moscow,RU")
 
@@ -73,13 +77,13 @@ weather=$($fetch_cmd http://api.openweathermap.org/data/2.5/weather?q=$location\
 
 ###[ Process Weather data ]####################################################
 
-city=$(echo $weather | jq -r '.name')
-temperature=$(echo $weather | jq '.main.temp')
-humidity=$(echo $weather | jq '.main.humidity')
-pressure=$(echo $weather | jq '.main.pressure')
-sky=$(echo $weather | jq -r '.weather[0].main')
-sunrise=$(echo $weather | jq '.sys.sunrise')
-sunset=$(echo $weather | jq '.sys.sunset')
+city=$(echo $weather | json "data['name']")
+temperature=$(echo $weather | json "data['main']['temp']")
+humidity=$(echo $weather | json "data['main']['humidity']")
+pressure=$(echo $weather | json "data['main']['pressure']")
+sky=$(echo $weather | json "data['weather'][0]['main']")
+sunrise=$(echo $weather | json "data['sys']['sunrise']")
+sunset=$(echo $weather | json "data['sys']['sunset']")
 
 
 
